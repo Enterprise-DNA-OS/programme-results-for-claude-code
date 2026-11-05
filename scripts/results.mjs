@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {getDb,REPO_ROOT} from './lib/db.mjs';
 import {parseCsv,pick} from './lib/csv.mjs';
+import {table} from './lib/format.mjs';
 
 export const commands={
  'projects':'List projects and owners','indicators':'Read approved measurement definitions','periods':'Read reporting dates and closure state',
@@ -145,7 +146,11 @@ export async function execute(db,cmd,o={}){
   await db.exec(o['dry-run']?'ROLLBACK':'COMMIT');return result;
  }catch(e){await db.exec('ROLLBACK');throw e;}
 }
-export function formatRows(rows){if(!Array.isArray(rows))return JSON.stringify(rows,null,2);if(!rows.length)return 'No records.';const keys=Object.keys(rows[0]);const flat=v=>v===null?'unknown':typeof v==='object'?JSON.stringify(v):String(v);return '| '+keys.join(' | ')+' |\n| '+keys.map(()=> '---').join(' | ')+' |\n'+rows.map(r=>'| '+keys.map(k=>flat(r[k]).replaceAll('|','/').replaceAll('\n',' ')).join(' | ')+' |').join('\n');}
+export function formatRows(rows){
+ if(!Array.isArray(rows))return JSON.stringify(rows,null,2);
+ if(!rows.length)return 'No records.';
+ return table(rows,Object.keys(rows[0]).map(key=>({key,label:key.replaceAll('_',' '),format:value=>value===null?'unknown':typeof value==='object'?JSON.stringify(value):String(value).replaceAll('\n',' ')})));
+}
 const allowed={
  'add-project':['code','name','owner','outcome'],'define-indicator':['code','name','unit','aggregation','definition','method'],'set-period':['code','name','start','end','due'],expect:['project','indicator','period','owner','target'],
  'record-result':['project','indicator','period','location','dimensions','code','value','denominator','evidence','observed','reason'],'review-result':['result','decision','note'],'add-action':['project','indicator','period','code','description','owner','due'],'complete-action':['action','evidence'],'log-note':['project','note'],'close-period':['period','note'],import:['vendor','file','map','sheet','dry-run'],export:['file'],history:['cell'],'weekly-review':['project','period','file'],'draft-partner':['project','period','file'],'draft-funder':['project','period','file']};
