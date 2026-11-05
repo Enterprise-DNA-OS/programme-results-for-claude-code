@@ -1,43 +1,53 @@
 # Programme Results for Claude Code: operating instructions
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+Read records before answering. This is a programme monitoring and evaluation desk for a trusted reporting operator, not a public data collection service.
 
-## Who this is for
+## Operator context
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
+Business: fill in the organisation name. Operator: fill in the responsible reporting lead. Priorities: complete partner returns, traceable evidence and honest results. Ask for missing business context when it matters.
 
-Fill this in once. A worker with context knows. A worker without it guesses.
+## Routing
 
-## How to work
+- List supported jobs: /help.
+- Read project owners and intended outcomes: /projects.
+- Read the measurement definitions: /indicators.
+- Check the reporting calendar: /periods.
+- Check accepted results and missing submissions: /reporting-desk.
+- Prepare partner follow-up: /partner-chase.
+- Read pending figures and their evidence: /review-queue.
+- Find complete results below their targets: /target-gaps.
+- Inspect figures by location and subgroup: /disaggregation.
+- Compare the same indicator over time: /trend.
+- Check evidence and reporting controls: /compliance.
+- Read outstanding follow-up work: /actions.
+- Find projects without a note in fourteen days: /stale.
+- Read change history or every version of one cell: /history.
+- Register a project: /add-project.
+- Define exactly what a measure means: /define-indicator.
+- Record approved reporting dates: /set-period.
+- Record who owes a return and its target: /expect.
+- Record a result or a traceable correction: /record-result.
+- Accept or reject the current result version: /review-result.
+- Assign a reporting follow-up: /add-action.
+- Record completed work with evidence: /complete-action.
+- Record programme context: /log-note.
+- Close a complete, reviewed reporting period: /close-period.
+- Test and import a DevResults reporting-period export: /import.
+- Write an owned snapshot without overwriting files: /export.
+- Draft Monday reporting review from three current reports: /weekly-review.
+- Draft a partner follow-up sheet: /draft-partner.
+- Draft a funder reporting working sheet: /draft-funder.
+- Change a field or rule: /customise.
+- Add a read-only report: /new-view.
 
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
+Open .claude/commands/<job>.md for the exact invocation. One CLI lives at scripts/results.mjs. Run npm run results -- help for discovery. All jobs accept --json. Match codes case-insensitively or use an ID prefix. If there are multiple matches, show the candidates and ask.
 
-## Routing table: one right way for each recurring job
+## Rules
 
-| When the operator asks for... | Use this |
-|---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+Never invent data, evidence, dates, identities or a causal claim. Missing is unknown, not zero. Never sum rates, snapshots across periods or overlapping groups. Reconcile the source before reviewing an imported result. A reviewer label is not authentication. Nothing here sends or publishes.
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+Draft into drafts/ and present the file in chat. Never delete history. Use a new result version for corrections and a new indicator code for a changed used definition. Do not bypass a period closure gate with direct updates. Record every expected obligation before using completeness as an assurance.
 
-## Hard rules
+Before adding fields or changing rules, export a new private snapshot, add a numbered migration and run npm test. Never alter an applied migration. Templates and scripts work with PostgreSQL or embedded PGlite. Keep commands in .claude/commands and keep AGENTS.md beside this file. No separate command tree for another runtime.
 
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
-
-## Where things live
-
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off DevResults.
-
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/devresults
+Protect source exports and reports. Keep .env, .data, drafts, exports, imports, views and docs-out out of Git. Configure brand.json for documents and views. See docs/compliance.md for the scope of the checks.

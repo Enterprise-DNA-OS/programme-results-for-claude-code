@@ -1,11 +1,58 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "period-brief",
+    "title": "Reporting period brief",
+    "for_each": "SELECT id,code FROM periods ORDER BY code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Calendar and sign-off",
+        "layout": "record",
+        "sql": "SELECT code,name,starts_on,ends_on,due_on,state,closed_by,closure_note FROM periods WHERE id=$1"
+      },
+      {
+        "title": "Results and missing submissions",
+        "sql": "SELECT project,indicator,unit,target,actual,accepted,pending,rejected FROM v_reporting_desk WHERE period_id=$1 ORDER BY project,indicator",
+        "note": "Unknown is not zero. Rates use pooled numerators and denominators. This working paper is not an audited service performance statement."
+      }
+    ]
+  },
+  {
+    "name": "indicator-reference",
+    "title": "Indicator reference sheet",
+    "for_each": "SELECT id,code FROM indicators ORDER BY code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Measurement definition",
+        "layout": "record",
+        "sql": "SELECT code,name,unit,aggregation,definition,method,approved_by FROM indicators WHERE id=$1"
+      },
+      {
+        "title": "Reporting history",
+        "sql": "SELECT project,period,target,actual,accepted,pending FROM v_reporting_desk WHERE indicator_id=$1 ORDER BY starts_on,project"
+      }
+    ]
+  },
+  {
+    "name": "partner-return",
+    "title": "Partner reporting return",
+    "for_each": "SELECT id,code FROM projects ORDER BY code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Project and intended outcome",
+        "layout": "record",
+        "sql": "SELECT code,name,owner,outcome FROM projects WHERE id=$1"
+      },
+      {
+        "title": "Expected returns",
+        "sql": "SELECT indicator,period,owner,due_on,target,actual,pending FROM v_reporting_desk WHERE project_id=$1 ORDER BY period,indicator"
+      },
+      {
+        "title": "Recorded context",
+        "sql": "SELECT note,actor,created_at FROM notes WHERE project_id=$1 ORDER BY created_at"
+      }
     ]
   }
 ]
